@@ -92,8 +92,9 @@ Esta es la parte más larga. Hazla con paciencia.
 ### 4.1 Crear la app
 
 1. Entra a [developers.facebook.com](https://developers.facebook.com) → **Mis apps** → **Crear app**.
-2. Caso de uso: **Otro** → Tipo: **Negocio** → ponle nombre (`Recepta`) → **Crear app**.
-3. En el panel, busca **WhatsApp** → **Configurar**.
+2. Ponle nombre (`Recepta`) y tu correo.
+3. Caso de uso: **"Conectar con clientes a través de WhatsApp"** (*Connect with customers through WhatsApp*). Con esto Meta agrega el producto WhatsApp solo; no tienes que buscarlo después.
+4. Te pedirá vincular una cuenta de Meta Business (puedes crearla ahí mismo) → **Crear app**.
 
 ### 4.2 Datos que vas a necesitar
 
@@ -122,9 +123,10 @@ El token temporal muere en 24 h. Para que no se te caiga el bot cada día:
 1. [business.facebook.com](https://business.facebook.com) → **Configuración del negocio**.
 2. **Usuarios** → **Usuarios del sistema** → **Agregar** → nombre: `recepta-bot`, rol: **Administrador**.
 3. **Agregar activos** → **Apps** → elige tu app → activa **Control total**.
-4. **Generar nuevo token** → elige tu app → caducidad: **Nunca** → permisos:
+4. **Generar nuevo token** → elige tu app → caducidad: **Nunca** → permisos (los **tres**):
    - ✅ `whatsapp_business_messaging`
    - ✅ `whatsapp_business_management`
+   - ✅ `business_management`
 5. **Genera** y guarda el token en un lugar seguro. **Solo se muestra una vez.**
 
 Ese es el token que va en el campo "Token de acceso" del panel.
