@@ -1,0 +1,11 @@
+# Nada de esto debe entrar a la imagen.
+node_modules
+dist
+.env
+.env.*
+!.env.example
+.git
+.gitignore
+*.log
+tests
+seed-demo.ts
