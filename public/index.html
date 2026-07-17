@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Recepta — Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/admin/styles.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🩺</text></svg>"
+    />
+  </head>
+  <body>
+    <!-- ── Login ───────────────────────────────────────────────────────────── -->
+    <div id="login" class="login">
+      <form class="login-card" id="login-form">
+        <div class="login-logo"><span class="dot"></span>Recepta</div>
+        <h1>Panel privado</h1>
+        <p class="muted">Ingresa tu clave de administrador para continuar.</p>
+        <input
+          type="password"
+          id="login-token"
+          placeholder="Clave de administrador"
+          autocomplete="current-password"
+          required
+        />
+        <button type="submit" class="btn btn-primary" id="login-btn">Entrar</button>
+        <p class="error" id="login-error" hidden></p>
+      </form>
+    </div>
+
+    <!-- ── App ─────────────────────────────────────────────────────────────── -->
+    <div id="app" hidden>
+      <header class="topbar">
+        <div class="brand"><span class="dot"></span>Recepta</div>
+
+        <div class="status" title="El agente atiende WhatsApp de forma automática">
+          <span class="pulse"></span> Agente en línea 24/7
+        </div>
+
+        <div class="topbar-right">
+          <select id="business-filter" aria-label="Filtrar por consultorio">
+            <option value="">Todos los consultorios</option>
+          </select>
+          <button class="btn btn-ghost" id="logout-btn">Salir</button>
+        </div>
+      </header>
+
+      <nav class="tabs" id="tabs">
+        <button class="tab is-active" data-view="conversaciones">Conversaciones</button>
+        <button class="tab" data-view="citas">Citas</button>
+        <button class="tab" data-view="leads">Leads</button>
+        <button class="tab" data-view="consultorios">Consultorios</button>
+      </nav>
+
+      <main class="container">
+        <section class="stats" id="stats">
+          <div class="chip"><span class="chip-num" id="stat-businesses">—</span><span class="chip-label">Consultorios</span></div>
+          <div class="chip"><span class="chip-num" id="stat-conversations">—</span><span class="chip-label">Conversaciones</span></div>
+          <div class="chip"><span class="chip-num" id="stat-appointments">—</span><span class="chip-label">Citas</span></div>
+          <div class="chip"><span class="chip-num" id="stat-leads">—</span><span class="chip-label">Leads</span></div>
+        </section>
+
+        <!-- Conversaciones -->
+        <section class="view" id="view-conversaciones">
+          <div class="chat-layout">
+            <aside class="chat-list card">
+              <div class="card-head">
+                <h2>Conversaciones</h2>
+                <span class="live" title="Se actualiza solo cada 10 segundos">auto</span>
+              </div>
+              <ul id="conv-list" class="conv-list">
+                <li class="empty">Cargando…</li>
+              </ul>
+            </aside>
+
+            <div class="chat-view card" id="chat-view">
+              <div class="empty-state" id="chat-empty">
+                <span class="empty-emoji">💬</span>
+                <p>Elige una conversación para ver el chat.</p>
+              </div>
+              <div id="chat-panel" hidden>
+                <div class="chat-head">
+                  <div>
+                    <strong id="chat-name">—</strong>
+                    <span class="muted" id="chat-phone"></span>
+                  </div>
+                  <span class="badge" id="chat-business"></span>
+                </div>
+                <div class="bubbles" id="chat-bubbles"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Citas -->
+        <section class="view" id="view-citas" hidden>
+          <div class="card">
+            <div class="card-head"><h2>Citas</h2></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Paciente</th><th>Servicio</th><th>Fecha</th><th>Hora</th><th>Consultorio</th><th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="citas-body">
+                  <tr><td colspan="6" class="empty">Cargando…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Leads -->
+        <section class="view" id="view-leads" hidden>
+          <div class="card">
+            <div class="card-head"><h2>Leads</h2></div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Interesado</th><th>Necesita</th><th>Contacto</th><th>Consultorio</th><th>Estado</th><th>Fecha</th>
+                  </tr>
+                </thead>
+                <tbody id="leads-body">
+                  <tr><td colspan="6" class="empty">Cargando…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- Consultorios -->
+        <section class="view" id="view-consultorios" hidden>
+          <div class="card">
+            <div class="card-head">
+              <h2>Consultorios</h2>
+              <button class="btn btn-primary" id="new-business-btn">+ Nuevo consultorio</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr><th>Nombre</th><th>Tipo</th><th>Phone number ID</th><th>Aviso al dueño</th><th>Activo</th><th></th></tr>
+                </thead>
+                <tbody id="businesses-body">
+                  <tr><td colspan="6" class="empty">Cargando…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card" id="business-form-card" hidden>
+            <div class="card-head">
+              <h2 id="form-title">Nuevo consultorio</h2>
+              <button class="btn btn-ghost" id="cancel-form-btn">Cancelar</button>
+            </div>
+
+            <form id="business-form" class="form">
+              <input type="hidden" id="f-id" />
+
+              <div class="grid-2">
+                <label>Nombre del consultorio
+                  <input id="f-name" required placeholder="Clínica Bella Piel" />
+                </label>
+                <label>Tipo
+                  <input id="f-type" required placeholder="clínica estética" />
+                </label>
+              </div>
+
+              <fieldset>
+                <legend>Conexión con Meta</legend>
+                <div class="grid-2">
+                  <label>Phone number ID
+                    <input id="f-phoneid" required placeholder="123456789012345" />
+                    <small>Lo copias de Meta → WhatsApp → API Setup.</small>
+                  </label>
+                  <label>Token de acceso
+                    <input id="f-token" type="password" placeholder="EAAG..." autocomplete="new-password" />
+                    <small id="f-token-help">Token permanente del usuario de sistema.</small>
+                  </label>
+                </div>
+              </fieldset>
+
+              <fieldset>
+                <legend>Avisos y zona horaria</legend>
+                <div class="grid-2">
+                  <label>WhatsApp personal del dueño <span class="opt">(opcional)</span>
+                    <input id="f-ownerphone" placeholder="573001112233" inputmode="numeric" />
+                    <small>Formato internacional <strong>sin “+”</strong> ni espacios. Recibe un aviso con cada cita nueva.</small>
+                  </label>
+                  <label>Zona horaria
+                    <input id="f-timezone" value="America/Bogota" />
+                  </label>
+                </div>
+                <label class="check">
+                  <input type="checkbox" id="f-active" checked /> Consultorio activo (atiende WhatsApp)
+                </label>
+              </fieldset>
+
+              <fieldset>
+                <legend>Cómo habla el agente</legend>
+                <div class="grid-2">
+                  <label>Dirección
+                    <input id="f-direccion" placeholder="Cra 43A #1-50, Medellín" />
+                  </label>
+                  <label>Horario de atención
+                    <input id="f-horario" placeholder="Lun-Vie 8am-6pm, Sáb 9am-1pm" />
+                  </label>
+                </div>
+                <label>Personalidad
+                  <input id="f-personalidad" placeholder="cálida, cercana, profesional" />
+                </label>
+                <label>Información adicional
+                  <textarea id="f-infoadicional" rows="2" placeholder="Parqueadero gratis para pacientes"></textarea>
+                </label>
+              </fieldset>
+
+              <fieldset>
+                <legend>Servicios <span class="opt">(el agente no puede ofrecer nada fuera de esta lista)</span></legend>
+                <div id="servicios-rows"></div>
+                <button type="button" class="btn btn-soft" id="add-servicio">+ Agregar servicio</button>
+              </fieldset>
+
+              <fieldset>
+                <legend>Datos que pide antes de agendar</legend>
+                <div id="preguntas-rows"></div>
+                <button type="button" class="btn btn-soft" id="add-pregunta">+ Agregar dato</button>
+              </fieldset>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="save-btn">Guardar consultorio</button>
+                <p class="error" id="form-error" hidden></p>
+              </div>
+            </form>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" hidden></div>
+    <script src="/admin/app.js"></script>
+  </body>
+</html>

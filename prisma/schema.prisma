@@ -1,0 +1,123 @@
+// Recepta — esquema de datos
+// Regla de oro: todo lo que cuelga de un consultorio se filtra SIEMPRE por businessId.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Un consultorio (tenant). Cada uno tiene su propio número de WhatsApp y su propia configuración de agente.
+model Business {
+  id                 String   @id @default(cuid())
+  name               String
+  type               String // ej. "clínica estética", "odontología"
+  wabaPhoneNumberId  String   @unique // phone_number_id de Meta: identifica al tenant en el webhook
+  accessToken        String // token de Meta del consultorio. NUNCA debe salir por la API ni por logs.
+  timezone           String   @default("America/Bogota")
+  active             Boolean  @default(true)
+  ownerPhone         String? // WhatsApp personal del dueño, formato internacional sin "+" (ej. "573001112233"). Recibe el aviso de cita nueva.
+  systemPromptConfig Json     @default("{}") // personalidad, servicios, horarios… (ver README)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  customers     Customer[]
+  conversations Conversation[]
+  appointments  Appointment[]
+  leads         Lead[]
+
+  @@index([active])
+}
+
+/// Un paciente, único por (consultorio, teléfono).
+model Customer {
+  id         String   @id @default(cuid())
+  businessId String
+  waPhone    String
+  name       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  business      Business       @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  conversations Conversation[]
+  appointments  Appointment[]
+  leads         Lead[]
+
+  @@unique([businessId, waPhone])
+  @@index([businessId])
+}
+
+/// Hilo de conversación entre un paciente y el agente.
+model Conversation {
+  id         String   @id @default(cuid())
+  businessId String
+  customerId String
+  status     String   @default("abierta") // "abierta" | "cerrada"
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  business Business  @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  customer Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  messages Message[]
+
+  @@index([businessId, status])
+  @@index([customerId])
+}
+
+/// Cada mensaje, entrante o saliente.
+model Message {
+  id             String   @id @default(cuid())
+  conversationId String
+  direction      String // "in" | "out"
+  content        String
+  waMessageId    String?  @unique // idempotencia: Meta reintenta los webhooks
+  answered       Boolean  @default(false) // lo usa el debounce para saber qué falta responder
+  createdAt      DateTime @default(now())
+
+  conversation Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt])
+  @@index([conversationId, direction, answered])
+}
+
+/// Cita agendada por el agente (tool `agendar_cita`).
+model Appointment {
+  id          String   @id @default(cuid())
+  businessId  String
+  customerId  String
+  serviceName String
+  date        String // YYYY-MM-DD
+  time        String // HH:MM
+  notes       String?
+  status      String   @default("pendiente") // "pendiente" | "confirmada" | "cancelada" | "atendida"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([businessId, date])
+  @@index([customerId])
+}
+
+/// Interesado capturado por el agente (tool `guardar_lead`).
+model Lead {
+  id          String   @id @default(cuid())
+  businessId  String
+  customerId  String
+  need        String
+  contactInfo String
+  qualified   Boolean  @default(false)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  business Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([businessId, createdAt])
+  @@index([customerId])
+}

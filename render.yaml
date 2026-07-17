@@ -1,0 +1,42 @@
+# Blueprint de Render — https://render.com/docs/blueprint-spec
+#
+# Cómo se usa: sube este repo a GitHub → Render → New → Blueprint → elige el repo.
+# Render lee este archivo y crea el servicio solo. Las variables marcadas con
+# `sync: false` te las pedirá en pantalla (son secretos: no viven en el repo).
+
+services:
+  - type: web
+    name: recepta
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./Dockerfile
+
+    # Render reinicia el servicio si esto deja de responder 200.
+    # Es también el que debe golpear UptimeRobot para que la instancia no se duerma.
+    healthCheckPath: /health
+
+    envVars:
+      # Defaults que puedes dejar tal cual.
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: GRAPH_API_VERSION
+        value: v23.0
+      - key: RESPONSE_DELAY_MS
+        value: "10000"
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+
+      # Secretos: Render los pide al crear el blueprint. Nunca los pongas aquí.
+      - key: DATABASE_URL
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: WHATSAPP_VERIFY_TOKEN
+        sync: false
+      - key: WHATSAPP_APP_SECRET
+        sync: false
+      - key: ADMIN_TOKEN
+        sync: false
