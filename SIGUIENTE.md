@@ -32,13 +32,18 @@ Estado al 17 de julio de 2026. Lo que ya funciona y los **3 pasos manuales** que
 
 ---
 
-## ⏳ Lo que falta (1 paso, y es solo seguridad)
+## 🎉 TODO COMPLETO — no queda nada pendiente
 
-> ✅ **UptimeRobot — HECHO.** Render ya no se duerme.
-> ✅ **Token permanente de Meta — HECHO.** No expira nunca; instalado y verificado en producción.
+> ✅ **UptimeRobot** — Render ya no se duerme (100% uptime).
+> ✅ **Token permanente de Meta** — no expira nunca; verificado en producción.
+> ✅ **Clave del panel** — rotada a una fuerte; la vieja ya no funciona.
 >
-> **Solo queda el paso 3 (clave del panel).** Los pasos 1 y 2 se dejan abajo por referencia,
-> pero ya están completos — no hay que hacer nada con ellos.
+> El bot está **vivo, estable y seguro, 24/7, sin mantenimiento.** Los detalles de cada
+> paso quedan abajo solo por referencia histórica.
+
+### Para entrar al panel
+https://recepta-jcpo.onrender.com/admin/ — la clave nueva está en tu `.env` local
+(variable `ADMIN_TOKEN`) y en Render → Environment.
 
 ### 1. UptimeRobot — ✅ HECHO (17 jul 2026)
 Monitor activo a `/health` cada 5 min, estado **Up**, 100% uptime, Render ya no se duerme.
@@ -76,11 +81,11 @@ que el primer paciente que escriba se pierda.
    "Clínica Bella Piel" → pega el token en **"Token de acceso"** → **Guardar**.
    (El campo aparece vacío a propósito; si lo dejas vacío conserva el anterior.)
 
-### 3. Cambiar la clave del panel — seguridad (2 min)
-**Problema:** la clave actual (`recepta-local-2026`) es débil y el panel es público con
-datos de pacientes (Ley 1581 de habeas data).
+### 3. Cambiar la clave del panel — ✅ HECHO
+**Problema (resuelto):** la clave inicial (`recepta-local-2026`) era débil para un panel
+público con datos de pacientes (Ley 1581 de habeas data). Ya se rotó a una fuerte.
 
-**Solución:**
+**Solución aplicada:**
 1. Genera una clave fuerte (en tu compu: `node -e "console.log(require('crypto').randomBytes(24).toString('hex'))"`).
 2. En **Render** → servicio `recepta` → **Environment** → variable `ADMIN_TOKEN` → pon la
    nueva → **Save** (reinicia solo).
