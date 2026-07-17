@@ -88,6 +88,7 @@ datos de pacientes (Ley 1581 de habeas data).
 4. Míralo en vivo en el panel → **Conversaciones**.
 
 ## ⚠️ Recordatorio de seguridad
-Rota estas credenciales que quedaron en el chat de esta sesión:
-- **Groq API key** → https://console.groq.com/keys (y actualízala en Render + `.env`).
+- **Groq API key** → ✅ ya rotada (17 jul 2026): la nueva está en Render y en `.env`, verificada
+  funcionando en producción. Solo falta que borres la vieja (`gsk_AzOMV0...`) en
+  https://console.groq.com/keys si no lo has hecho ya.
 - Cuando hagas el token permanente, el temporal muere solo (no hay que revocarlo).
