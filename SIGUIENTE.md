@@ -32,14 +32,19 @@ Estado al 17 de julio de 2026. Lo que ya funciona y los **3 pasos manuales** que
 
 ---
 
-## ⏳ Los pasos que faltan (tu login)
+## ⏳ Lo que falta (1 paso, y es solo seguridad)
 
-> ✅ **Token permanente de Meta — HECHO (17 jul 2026).** Instalado y verificado en
-> producción; no expira nunca. (El temporal había expirado a las 10 AM y tumbó el bot;
-> ya quedó resuelto.) Se dejó el detalle abajo por referencia, pero no hay que hacer nada.
+> ✅ **UptimeRobot — HECHO.** Render ya no se duerme.
+> ✅ **Token permanente de Meta — HECHO.** No expira nunca; instalado y verificado en producción.
+>
+> **Solo queda el paso 3 (clave del panel).** Los pasos 1 y 2 se dejan abajo por referencia,
+> pero ya están completos — no hay que hacer nada con ellos.
 
-### 1. UptimeRobot — para que Render no se duerma (5 min) ⭐ el más importante
-**Problema real:** Render (plan gratis) se duerme a los 15 min sin tráfico. Por eso tu
+### 1. UptimeRobot — ✅ HECHO (17 jul 2026)
+Monitor activo a `/health` cada 5 min, estado **Up**, 100% uptime, Render ya no se duerme.
+(Dejado por referencia; no hay que hacer nada.)
+
+**Problema (resuelto):** Render (plan gratis) se duerme a los 15 min sin tráfico. Por eso tu
 *primer* mensaje de prueba no respondió: Render estaba dormido cuando Meta intentó entregar.
 
 **Solución:**
