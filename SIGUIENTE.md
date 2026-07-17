@@ -32,7 +32,11 @@ Estado al 17 de julio de 2026. Lo que ya funciona y los **3 pasos manuales** que
 
 ---
 
-## ⏳ Los 3 pasos que faltan (tu login, ~10 min en total)
+## ⏳ Los pasos que faltan (tu login)
+
+> ✅ **Token permanente de Meta — HECHO (17 jul 2026).** Instalado y verificado en
+> producción; no expira nunca. (El temporal había expirado a las 10 AM y tumbó el bot;
+> ya quedó resuelto.) Se dejó el detalle abajo por referencia, pero no hay que hacer nada.
 
 ### 1. UptimeRobot — para que Render no se duerma (5 min) ⭐ el más importante
 **Problema real:** Render (plan gratis) se duerme a los 15 min sin tráfico. Por eso tu
@@ -50,11 +54,10 @@ Estado al 17 de julio de 2026. Lo que ya funciona y los **3 pasos manuales** que
 Listo: le pega cada 5 min y nunca se duerme. Sin esto, cada rato de inactividad hace
 que el primer paciente que escriba se pierda.
 
-### 2. Token permanente de Meta — para que no se caiga (5 min)
-**Problema:** el token actual es temporal (Meta los da por ~24 h). Cuando expire, el bot
-deja de poder responder.
+### 2. Token permanente de Meta — ✅ HECHO (dejado por referencia)
+**Problema (resuelto):** el token temporal expiraba a las ~24 h y tumbaba el bot.
 
-**Solución (en business.facebook.com):**
+**Solución aplicada (en business.facebook.com):**
 1. **Configuración del negocio** → **Usuarios** → **Usuarios del sistema** → **Agregar**.
 2. Nombre: `recepta-bot` · Rol: **Administrador** → crear.
 3. **Agregar activos** → **Apps** → elige **Recepta** → activa **Control total**.
