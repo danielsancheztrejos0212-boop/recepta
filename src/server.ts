@@ -54,6 +54,9 @@ export function buildServer() {
   /** Health check: lo usan Render y UptimeRobot para mantener la instancia despierta. */
   app.get("/health", async () => ({ ok: true }));
 
+  /** Política de privacidad pública (la exige Meta para publicar la app / modo Live). */
+  app.get("/privacy", async (_request, reply) => reply.type("text/html").sendFile("privacy.html"));
+
   app.get("/", async (_request, reply) => reply.redirect("/admin/"));
 
   /** Nada de stack traces hacia afuera: se loguea completo y se responde genérico. */
