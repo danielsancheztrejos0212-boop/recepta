@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { limpiarRespuesta } from "../src/conversation/agent";
+import { limpiarRespuesta, pareceBasura } from "../src/conversation/agent";
 
 /**
  * Regresión de una fuga vista EN VIVO contra Groq: Llama a veces escribe la llamada
@@ -63,5 +63,47 @@ describe("limpiarRespuesta", () => {
     expect(limpio).not.toContain("<function");
     expect(limpio).toContain("Uno");
     expect(limpio).toContain("listo");
+  });
+});
+
+/**
+ * Regresión de una salida degenerada REAL de `openai/gpt-oss-120b` (1 de cada 5 corridas):
+ * tras usar una tool devolvió puntuación sin sentido. Sin este filtro, el paciente
+ * habría recibido galimatías por WhatsApp.
+ */
+describe("pareceBasura", () => {
+  it("detecta la salida degenerada real capturada en producción", () => {
+    const real =
+      "Cita c ​    ​   ​   ​  …  ​……… ​ …...… … ……… …… … …\n\n\n\n¡............  \n\n\n\n… …";
+    expect(pareceBasura(real)).toBe(true);
+  });
+
+  it("detecta rachas largas de puntos", () => {
+    expect(pareceBasura("Tu cita quedó agendada........................ gracias")).toBe(true);
+  });
+
+  it("detecta texto casi sin letras", () => {
+    expect(pareceBasura("… … … ‥ ·  ·  …  ·  …  ‥  ·  …  ·  ‥  …  ·  … ")).toBe(true);
+  });
+
+  it("NO marca una respuesta normal del agente", () => {
+    const ok =
+      "Listo, Daniel. Tu cita de fisioterapia está agendada para mañana 21/07 a las 10:00 am. Nos vemos en Calle 34 # 65-9, Laureles.";
+    expect(pareceBasura(ok)).toBe(false);
+  });
+
+  it("NO marca respuestas con acentos, signos y emojis legítimos", () => {
+    expect(pareceBasura("¿Te sirve mañana a las 3:00 pm? 😊 ¡Nos vemos en la clínica!")).toBe(false);
+  });
+
+  it("NO marca mensajes cortos legítimos", () => {
+    expect(pareceBasura("Listo 👍")).toBe(false);
+    expect(pareceBasura("¡Claro!")).toBe(false);
+  });
+
+  it("NO marca una lista de servicios larga y válida", () => {
+    const servicios =
+      "Ofrecemos fisioterapia, fisiatría, manejo del dolor, rehabilitación neurológica, terapia de piso pélvico y drenaje linfático. ¿Cuál te interesa?";
+    expect(pareceBasura(servicios)).toBe(false);
   });
 });

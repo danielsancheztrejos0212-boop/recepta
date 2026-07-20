@@ -39,6 +39,27 @@ export function limpiarRespuesta(texto: string): string {
   return limpio.replace(/[ \t]{2,}/g, " ").replace(/\s+([.,!?])/g, "$1").trim();
 }
 
+/**
+ * Detecta salida DEGENERADA del modelo.
+ *
+ * Visto en vivo con `openai/gpt-oss-120b` (1 de cada 5 corridas): tras usar una tool,
+ * devolvió "Cita c …......… ¡............ … …" — puntuación y espacios sin sentido.
+ * Eso se le habría enviado a un paciente.
+ *
+ * Ningún modelo es infalible, así que en vez de elegir modelo por miedo, filtramos aquí:
+ * si el texto es casi todo puntuación/espacios, preferimos el fallback amable.
+ */
+export function pareceBasura(texto: string): boolean {
+  if (texto.length < 25) return false; // mensajes cortos legítimos ("Listo 👍")
+
+  // Proporción de letras/números frente al total (emojis y signos no cuentan como letra).
+  const letras = (texto.match(/[\p{L}\p{N}]/gu) ?? []).length;
+  if (letras / texto.length < 0.5) return true;
+
+  // Rachas largas de puntos o puntos suspensivos.
+  return /[.…]{6,}/.test(texto);
+}
+
 export interface HistoryEntry {
   direction: string; // "in" | "out"
   content: string;
@@ -120,6 +141,15 @@ export async function runAgent({ business, customer, history }: RunAgentArgs): P
             { businessId: business.id },
             "El modelo escribió una llamada a tool como texto; se limpió antes de enviar",
           );
+        }
+
+        // Red de seguridad: jamás mandarle galimatías a un paciente.
+        if (pareceBasura(texto)) {
+          logger.warn(
+            { businessId: business.id, muestra: texto.slice(0, 60) },
+            "El modelo devolvió texto degenerado; se usa el fallback",
+          );
+          return FALLBACK;
         }
 
         return texto.length > 0 ? texto : FALLBACK;

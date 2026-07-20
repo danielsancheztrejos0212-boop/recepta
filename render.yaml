@@ -19,7 +19,7 @@ services:
     envVars:
       # Defaults que puedes dejar tal cual.
       - key: GROQ_MODEL
-        value: llama-3.3-70b-versatile
+        value: openai/gpt-oss-120b
       - key: GRAPH_API_VERSION
         value: v23.0
       - key: RESPONSE_DELAY_MS
